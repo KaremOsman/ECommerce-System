@@ -83,8 +83,7 @@ E-Commerce Solution (8 Projects)
 | ![Swagger](ScreenShots/swagger-page.jpg) | ![Auth](ScreenShots/authentication-endpoints.jpg) | ![Products API](ScreenShots/products-endpoints.jpg) |
 
 ---
-*ملاحظة: يمكنك رؤية باقي الـ Endpoints والصفحات داخل فولدر `ScreenShots` في المشروع.*
-## 👨‍💻 Author
+Note: You can see the rest of the Endpoints and pages within the ScreenShots folder in the project.## 👨‍💻 Author
 
 Mohamed Osman Mohamed
 ASP.NET Core Developer
