@@ -70,7 +70,20 @@ E-Commerce Solution (8 Projects)
 - Stripe
 
 ---
+## 📸 Project Preview
 
+### 🖥️ Admin Dashboard
+| Home Page | Login | Products Management |
+| :---: | :---: | :---: |
+| ![Home](ScreenShots/admin-dashboard-home-page.jpg) | ![Login](ScreenShots/admin-dashboard-login-page.jpg) | ![Products](ScreenShots/products-management-home-page.jpg) |
+
+### 🛠️ API & Endpoints (Swagger)
+| Swagger UI | Authentication | Products API |
+| :---: | :---: | :---: |
+| ![Swagger](ScreenShots/swagger-page.jpg) | ![Auth](ScreenShots/authentication-endpoints.jpg) | ![Products API](ScreenShots/products-endpoints.jpg) |
+
+---
+*ملاحظة: يمكنك رؤية باقي الـ Endpoints والصفحات داخل فولدر `ScreenShots` في المشروع.*
 ## 👨‍💻 Author
 
 Mohamed Osman Mohamed
