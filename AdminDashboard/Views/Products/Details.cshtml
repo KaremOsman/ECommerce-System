@@ -1,0 +1,93 @@
+﻿@using Shared.DataTransferObject.ProductModules
+@model ProductDto
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container py-5">
+    <div class="card border-0 shadow-lg overflow-hidden" style="border-radius: 20px;">
+        
+        <div class="position-relative bg-light d-flex align-items-center justify-content-center p-5" style="min-height: 400px; background: linear-gradient(to bottom, #f8f9fa, #ffffff);">
+            <img src="@Model.PictureUrl" class="img-fluid rounded" alt="@Model.Name" 
+                 style="max-height: 350px; object-fit: contain; filter: drop-shadow(0 10px 15px rgba(0,0,0,0.1));">
+            
+            <button onclick="window.history.back();" class="btn btn-white shadow-sm position-absolute top-0 start-0 m-4 rounded-pill px-3">
+                     <i class="fas fa-arrow-left me-2"></i> Back
+            </button>
+        </div>
+
+        <div class="card-body p-4 p-md-5">
+            <div class="row align-items-center mb-4">
+                <div class="col-md-8">
+                    <h1 class="display-5 fw-bold text-dark mb-2">@Model.Name</h1>
+                    <div class="d-flex gap-2 mb-3">
+                        <span class="badge bg-primary-soft text-primary px-3 py-2 rounded-pill">@Model.BrandName</span>
+                        <span class="badge bg-secondary-soft text-secondary px-3 py-2 rounded-pill">@Model.TypeName</span>
+                    </div>
+                </div>
+                <div class="col-md-4 text-md-end">
+                    <div class="price-tag">
+                        <small class="text-muted d-block text-uppercase fw-bold">Price</small>
+                        <h2 class="text-success display-6 fw-bold text-nowrap">@Model.Price.ToString("N2")&nbsp;$</h2>
+                    </div>
+                </div>
+            </div>
+
+            <hr class="my-4 opacity-25">
+
+            <div class="mb-5">
+                <h4 class="fw-bold mb-3">About this product</h4>
+                <p class="text-secondary fs-5 lh-lg">
+                    @Model.Description
+                </p>
+            </div>
+
+            <div class="d-flex gap-3 mt-5">
+               <form asp-action="Delete" asp-route-id="@Model.Id" method="post" id="deleteForm">
+    
+    <div class="d-flex gap-3 mt-5">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning btn-lg px-5 rounded-pill fw-bold shadow-sm">
+            <i class="fas fa-edit me-2"></i> Edit Details
+        </a>
+
+        <button type="submit" 
+                class="btn btn-outline-danger btn-lg px-4 rounded-pill" 
+                onclick="return confirm('Do you want to delete the product: @Model.Name ?');">
+            <i class="fas fa-trash me-2"></i> Delete
+        </button>
+    </div>
+
+</form>
+            </div>
+        </div>
+    </div>
+</div>
+<style>
+    /* Custom Styles to make it look Premium */
+    body { background-color: #f4f7f6; }
+    
+    .bg-primary-soft { background-color: rgba(13, 110, 253, 0.1); }
+    .bg-secondary-soft { background-color: rgba(108, 117, 125, 0.1); }
+    
+    .btn-white {
+        background-color: white;
+        border: 1px solid #eee;
+        transition: all 0.3s ease;
+    }
+    .btn-white:hover {
+        background-color: #f8f9fa;
+        transform: translateY(-2px);
+    }
+
+    .card { transition: all 0.3s ease; }
+    
+    /* Ensuring the price doesn't break */
+    .text-nowrap { white-space: nowrap; }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .display-5 { font-size: 2rem; }
+        .price-tag { text-align: left; margin-top: 20px; }
+    }
+</style>

@@ -1,0 +1,65 @@
+﻿@model RoleViewModel
+
+<form asp-action="Create" method="post" class="animate__animated animate__fadeIn">
+    <div class="mb-3">
+        <div class="input-group custom-role-group shadow-sm">
+            
+            <span class="input-group-text bg-white border-end-0 ps-3">
+                <i class="fas fa-plus-circle text-success"></i>
+            </span>
+            
+            <input asp-for="Name"
+                   class="form-control border-start-0 ps-1 py-3"
+                   style="font-size: 1.1rem; border-color: #dee2e6;"
+                   placeholder="Type role name..."
+                   required
+                   autocomplete="off" />
+
+            <button type="submit" class="btn btn-success px-4 fw-bold text-uppercase" style="letter-spacing: 0.5px;">
+                <i class="fas fa-plus me-1"></i> Add New
+            </button>
+        </div>
+        
+        <span asp-validation-for="Name" class="text-danger small mt-2 d-block ms-2 fw-semibold"></span>
+    </div>
+</form>
+
+<style>
+    
+    .custom-role-group {
+        border-radius: 12px; 
+        overflow: hidden; 
+        border: 1px solid #dee2e6;
+    }
+
+        .custom-role-group .form-control {
+            border: none;
+        }
+
+            .custom-role-group .form-control:focus {
+                box-shadow: none;
+                background-color: #fff;
+            }
+
+        .custom-role-group .input-group-text {
+            border: none;
+            color: #adb5bd;
+        }
+
+        .custom-role-group .btn-success {
+            border: none;
+            border-radius: 0; 
+            background-color: #198754;
+            transition: all 0.3s ease;
+        }
+
+            .custom-role-group .btn-success:hover {
+                background-color: #157347;
+                filter: brightness(1.1);
+            }
+
+        .custom-role-group:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important;
+        }
+</style>

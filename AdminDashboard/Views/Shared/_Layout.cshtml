@@ -1,0 +1,243 @@
+﻿@using Microsoft.AspNetCore.Identity
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Admin_Dashboard</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    @RenderSection("Styles", required: false)
+
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+        background: #f4f7fb;
+        }
+
+        .sb-topnav {
+        background: linear-gradient(90deg, #111827 0%, #1f2937 100%) !important;
+        box-shadow: 0 4px 18px rgba(0,0,0,.12);
+        }
+
+        .navbar-brand {
+        font-weight: 700;
+        letter-spacing: .3px;
+        }
+
+        #layoutSidenav_nav {
+        box-shadow: 2px 0 18px rgba(0,0,0,.08);
+        }
+
+        .sb-sidenav-dark {
+        background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+        }
+
+        .sb-sidenav-menu-heading {
+        color: rgba(255,255,255,.45) !important;
+        letter-spacing: .7px;
+        font-size: .72rem;
+        text-transform: uppercase;
+        margin-top: .75rem;
+        }
+
+        .sb-sidenav .nav-link {
+        border-radius: 12px;
+        margin: 4px 10px;
+        padding: .8rem .95rem;
+        color: rgba(255,255,255,.82) !important;
+        transition: .2s ease;
+        }
+
+        .sb-sidenav .nav-link:hover {
+        background: rgba(255,255,255,.08);
+        color: #fff !important;
+        transform: translateX(2px);
+        }
+
+        .sb-sidenav .nav-link.active {
+        background: rgba(59, 130, 246, .2);
+        color: #fff !important;
+        box-shadow: inset 0 0 0 1px rgba(59, 130, 246, .25);
+        }
+
+        .sb-nav-link-icon {
+        width: 22px;
+        text-align: center;
+        }
+
+        .sb-sidenav-footer {
+        background: rgba(0,0,0,.14) !important;
+        border-top: 1px solid rgba(255,255,255,.08);
+        color: #fff;
+        }
+
+        #layoutSidenav_content main {
+        min-height: calc(100vh - 120px);
+        }
+
+        .page-shell {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(15,23,42,.08);
+        padding: 1.5rem;
+        }
+
+        footer {
+        background: #fff;
+        border-top: 1px solid #e9ecef;
+        }
+
+        .user-pill {
+        background: rgba(255,255,255,.08);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 999px;
+        padding: .45rem .8rem;
+        }
+
+        .dropdown-menu {
+        border: none;
+        box-shadow: 0 12px 30px rgba(0,0,0,.12);
+        border-radius: 14px;
+        }
+
+        .dropdown-item {
+        border-radius: 10px;
+        margin: 2px 8px;
+        width: auto;
+        }
+    </style>
+</head>
+
+<body class="sb-nav-fixed">
+
+    <nav class="sb-topnav navbar navbar-expand navbar-dark">
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-3 ms-2 text-white" id="sidebarToggle" href="#!">
+            <i class="fas fa-bars"></i>
+        </button>
+
+        <a class="navbar-brand ps-1" asp-controller="Home" asp-action="Index">
+            Admin Dashboard
+        </a>
+
+        <div class="ms-auto d-flex align-items-center me-3">
+            <div class="dropdown">
+                <a class="nav-link dropdown-toggle text-white user-pill"
+                       id="navbarDropdown"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
+                    <span class="me-2 d-none d-lg-inline small text-white-50">
+                        @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Guest")
+                    </span>
+                    <i class="fas fa-user fa-fw"></i>
+                </a>
+
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li><a class="dropdown-item" href="#!"><i class="fas fa-gear me-2"></i>Settings</a></li>
+                        <li><a class="dropdown-item" href="#!"><i class="fas fa-list-check me-2"></i>Activity Log</a></li>
+                        <li><hr class="dropdown-divider" /></li>
+                        <li><a class="dropdown-item text-danger" asp-controller="Admin" asp-action="LogOut"><i class="fas fa-right-from-bracket me-2"></i>Logout</a></li>
+                    }
+                    else
+                    {
+                        <li><a class="dropdown-item" asp-controller="Admin" asp-action="LogIn"><i class="fas fa-right-to-bracket me-2"></i>Login</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav pt-3">
+                        <div class="sb-sidenav-menu-heading">Security</div>
+
+                        <a class="nav-link @(currentController == "Roles" ? "active" : "")"
+                               asp-controller="Roles" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-user-shield"></i></div>
+                            Roles
+                        </a>
+
+                        <a class="nav-link @(currentController == "Users" ? "active" : "")"
+                               asp-controller="Users" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-users"></i></div>
+                            Users
+                        </a>
+
+                        <div class="sb-sidenav-menu-heading">Inventory</div>
+
+                        <a class="nav-link @(currentController == "Products" ? "active" : "")"
+                               asp-controller="Products" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-box"></i></div>
+                            Products
+                        </a>
+
+                        <a class="nav-link @(currentController == "ProductTypes" ? "active" : "")"
+                               asp-controller="Types" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-list"></i></div>
+                            Product Types
+                        </a>
+
+                        <a class="nav-link @(currentController == "ProductBrands" ? "active" : "")"
+                               asp-controller="Brands" asp-action="Index">
+                            <div class="sb-nav-link-icon"><i class="fas fa-tag"></i></div>
+                            Product Brands
+                        </a>
+                    </div>
+                </div>
+
+                <div class="sb-sidenav-footer">
+                    <div class="small text-white-50">Logged in as:</div>
+                    <div class="fw-semibold">
+                        @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Not Logged In")
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4 py-4">
+                    @RenderBody()
+                </div>
+            </main>
+
+            <footer class="py-3 mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Your Dashboard 2026</div>
+                        <div>
+                            <a href="#" class="text-decoration-none">Privacy Policy</a>
+                            &middot;
+                            <a href="#" class="text-decoration-none">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/scripts.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/notifications.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

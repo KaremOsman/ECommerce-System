@@ -1,0 +1,143 @@
+﻿@model IEnumerable<UserViewModel>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid mt-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold">
+            <i class="fas fa-users-cog me-2"></i> Users Management
+        </h2>
+
+        <span class="badge bg-secondary">
+            Total Users: @Model.Count()
+        </span>
+    </div>
+
+    <!-- ACTION BAR -->
+    <div id="actionBar" class="alert alert-primary d-none d-flex justify-content-between align-items-center shadow-sm">
+        <div>
+            <strong id="selectedUserText">No user selected</strong>
+        </div>
+
+        <a id="editBtn" class="btn btn-warning btn-sm rounded-pill px-3" href="#">
+            <i class="fas fa-edit me-1"></i> Edit Roles
+        </a>
+    </div>
+
+    <!-- USERS CARDS -->
+    <div class="row g-3">
+
+        @foreach (var user in Model)
+        {
+            <div class="col-md-4">
+
+                <div class="card user-card shadow-sm border-0 h-100"
+                     data-id="@user.Id"
+                     data-name="@user.UserName">
+
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between align-items-start">
+
+                            <div>
+                                <h5 class="fw-bold mb-1">@user.UserName</h5>
+                                <small class="text-muted">@user.DisplayName</small>
+                            </div>
+
+                            <!-- شكلي فقط -->
+                            <input type="checkbox" class="form-check-input user-select" disabled>
+                        </div>
+
+                        <hr />
+
+                        <p class="mb-1">
+                            <i class="far fa-envelope me-1"></i> @user.Email
+                        </p>
+
+                        <p class="mb-2">
+                            <i class="fas fa-phone me-1"></i> @(user.PhoneNumber ?? "N/A")
+                        </p>
+
+                        <div>
+                            @foreach (var role in user.Roles)
+                            {
+                                <span class="badge bg-info text-dark me-1">@role</span>
+                            }
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+
+    </div>
+</div>
+
+<!-- SCRIPT -->
+@section Scripts {
+    <script>
+        let selectedId = null;
+
+        $('.user-card').on('click', function () {
+
+            const card = $(this);
+            const id = card.data('id');
+            const name = card.data('name');
+
+            // لو نفس الكارت → إلغاء التحديد
+            if (selectedId === id) {
+
+                selectedId = null;
+
+                $('.user-card').removeClass('border-primary');
+                $('.user-select').prop('checked', false);
+
+                $('#actionBar').addClass('d-none');
+                $('#selectedUserText').text("No user selected");
+                $('#editBtn').attr('href', '#');
+
+                return;
+            }
+
+            // اختيار جديد
+            selectedId = id;
+
+            $('.user-card').removeClass('border-primary');
+            $('.user-select').prop('checked', false);
+
+            card.addClass('border-primary');
+            card.find('.user-select').prop('checked', true);
+
+            $('#actionBar').removeClass('d-none');
+            $('#selectedUserText').text("Selected: " + name);
+            $('#editBtn').attr('href', `/Users/Edit/${selectedId}`);
+        });
+    </script>
+}
+
+<!-- STYLE -->
+<style>
+    .user-card {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        border-radius: 16px;
+    }
+
+        .user-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+    .border-primary {
+        border: 2px solid #0d6efd !important;
+    }
+
+    #actionBar {
+        border-radius: 14px;
+    }
+</style>

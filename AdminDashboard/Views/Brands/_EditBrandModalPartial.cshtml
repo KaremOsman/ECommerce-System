@@ -1,0 +1,49 @@
+﻿@using Shared.DataTransferObject.ProductModules
+@model BrandDto
+
+<div class="modal fade" id="editBrandModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="fw-bold"><i class="fas fa-edit text-warning me-2"></i> Edit Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form id="editForm" asp-action="Edit" asp-controller="Brands" method="post">
+                    @Html.AntiForgeryToken()
+                    
+                    <input type="hidden" id="editBrandId" name="Id" />
+
+                    <div class="mb-4">
+                        <label class="form-label small fw-bold text-muted">Brand Name</label>
+                        <div class="input-group shadow-sm border rounded-3 overflow-hidden">
+                            <span class="input-group-text bg-white border-0 ps-3">
+                                <i class="fas fa-tag text-warning"></i>
+                            </span>
+                            <input type="text" id="editBrandName" name="Name"
+                                   class="form-control border-0 py-3 fw-bold"
+                                   style="font-size: 1.1rem;"
+                                   placeholder="Enter new name..."
+                                   required />
+                        </div>
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-light w-100 py-3 fw-bold"
+                                    style="border-radius: 15px;" data-bs-dismiss="modal">
+                                Cancel
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button type="submit" class="btn btn-dark w-100 py-3 fw-bold"
+                                    style="border-radius: 15px; background-color: #1e293b;">
+                                <i class="fas fa-save me-2"></i>Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

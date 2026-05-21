@@ -1,0 +1,429 @@
+﻿@using Shared
+@using Shared.DataTransferObject.ProductModules
+@model PaginationResult<ProductDto>
+
+@{
+    ViewData["Title"] = "Products Management";
+}
+
+@Html.AntiForgeryToken()
+
+@section Styles {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    @* Adding Google Font for a premium look *@
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f4f7fa;
+        }
+        
+        .page-shell {
+            background: #fff;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            padding: 2.5rem;
+            border: 1px solid #edf2f7;
+        }
+
+        .header-icon-box {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0d6efd, #0043a8);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: 0 8px 15px rgba(13, 110, 253, 0.2);
+        }
+
+        .main-header-title {
+            font-weight: 800;
+            color: #1a202c;
+            letter-spacing: -0.8px;
+            font-size: 1.75rem;
+        }
+
+        .filter-section {
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 1px solid #cbd5e1;
+            padding: 12px 16px;
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+        }
+
+            .form-control:focus, .form-select:focus {
+                background-color: #fff;
+                border-color: #0d6efd;
+                box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.1);
+            }
+
+        #productsTable tbody tr {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent !important;
+        }
+        
+            #productsTable tbody tr.selected-row {
+                background-color: #f0f7ff !important;
+                border-left: 4px solid #0d6efd !important;
+                transform: scale(1.002);
+            }
+
+        .product-thumb {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: 14px;
+            border: 1px solid #eee;
+            background: #fff;
+        }
+
+        #selectionBar {
+            position: sticky;
+            top: 20px;
+            z-index: 1050;
+            background: #fff;
+            border: 2px solid #0d6efd;
+            display: none;
+            border-radius: 18px;
+            box-shadow: 0 15px 35px rgba(13, 110, 253, 0.15);
+        }
+
+        .pagination .page-link {
+            border: none;
+            margin: 0 5px;
+            border-radius: 12px !important;
+            padding: 12px 20px;
+            background: #fff;
+            color: #475569;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .pagination .page-item.active .page-link {
+            background: #0d6efd;
+            color: #fff;
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+
+        .desc-column {
+            max-width: 220px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+}
+
+<div class="container-fluid py-4">
+    <div class="page-shell">
+        
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div class="d-flex align-items-center gap-3">
+                <div class="header-icon-box">
+                    <i class="fas fa-boxes"></i>
+                </div>
+                <div>
+                    <h2 class="main-header-title m-0">Products Management</h2>
+                    <p class="text-muted small m-0 mt-1">Monitor, filter, and manage your inventory in real-time</p>
+                </div>
+            </div>
+            <a asp-action="Create" class="btn btn-primary rounded-pill px-4 py-2 shadow-sm fw-bold">
+                <i class="fas fa-plus-circle me-2"></i> Add New Product
+            </a>
+        </div>
+
+        <div class="filter-section">
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <label class="small fw-bold text-secondary mb-2 ms-1">Quick Search</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-transparent border-end-0">
+                            <i class="fas fa-search text-muted"></i>
+                        </span>
+                        <input type="text" id="searchInput" class="form-control border-start-0" placeholder="Product name or ID..." value="@Context.Request.Query["searchValue"]">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <label class="small fw-bold text-secondary mb-2 ms-1">Brand</label>
+                    <select id="brandFilter" class="form-select live-filter">
+                        <option value="">All Brands</option>
+                        @if (ViewBag.Brands != null)
+                        {
+                            foreach (var brand in (SelectList)ViewBag.Brands)
+                            {
+                                <option value="@brand.Value" selected="@(Context.Request.Query["brandId"] == brand.Value)">@brand.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label class="small fw-bold text-secondary mb-2 ms-1">Type</label>
+                    <select id="typeFilter" class="form-select live-filter">
+                        <option value="">All Categories</option>
+                        @if (ViewBag.Types != null)
+                        {
+                            foreach (var type in (SelectList)ViewBag.Types)
+                            {
+                                <option value="@type.Value" selected="@(Context.Request.Query["typeId"] == type.Value)">@type.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="small fw-bold text-secondary mb-2 ms-1">Order By</label>
+                    <select id="sortFilter" class="form-select live-filter">
+                        <option value="1" selected="@(Context.Request.Query["sortingOptions"] == "1")">Alphabetical (A-Z)</option>
+                        <option value="2" selected="@(Context.Request.Query["sortingOptions"] == "2")">Alphabetical (Z-A)</option>
+                        <option value="3" selected="@(Context.Request.Query["sortingOptions"] == "3")">Price: Lowest first</option>
+                        <option value="4" selected="@(Context.Request.Query["sortingOptions"] == "4")">Price: Highest first</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div id="selectionBar" class="p-3 mb-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center ms-3">
+                    <div class="bg-primary text-white rounded-pill px-3 py-1 me-2 small fw-bold" id="selectedCount">0</div>
+                    <span class="fw-bold text-dark">Products Selected</span>
+                </div>
+                <div class="d-flex gap-2 me-2">
+                    <button id="btnBulkDetails" class="btn btn-info btn-sm text-white rounded-pill px-4 shadow-sm">View Details</button>
+                    <button id="btnBulkEdit" class="btn btn-warning btn-sm rounded-pill px-4 shadow-sm">Edit</button>
+                    <button id="btnBulkDelete" class="btn btn-danger btn-sm rounded-pill px-4 shadow-sm">Delete</button>
+                    <button id="btnCancelSelection" class="btn btn-light btn-sm border rounded-pill px-3">Cancel</button>
+                </div>
+            </div>
+        </div>
+
+        @if (Model.Data?.Any() == true)
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle" id="productsTable">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="text-center py-3" style="width: 100px;">Preview</th>
+                            <th class="py-3">Product Info</th>
+                            <th class="py-3">Short Description</th>
+                            <th class="text-center py-3">Brand</th>
+                            <th class="text-center py-3">Category</th>
+                            <th class="text-end py-3 px-4">Price</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Data)
+                        {
+                            <tr data-id="@item.Id" data-name="@item.Name" class="product-row">
+                                <td class="text-center">
+                                    <img src="@item.PictureUrl" class="product-thumb" onerror="this.src='/images/no-image.png'" />
+                                </td>
+                                <td>
+                                    <div class="fw-bold text-dark">@item.Name</div>
+                                    <div class="small text-muted">SKU: #@item.Id</div>
+                                </td>
+                                <td class="desc-column text-muted small">@item.Description</td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-light text-dark border px-3 py-2">@item.BrandName</span>
+                                </td>
+                                <td class="text-center">
+                                    <span class="badge rounded-pill bg-light text-secondary border px-3 py-2">@item.TypeName</span>
+                                </td>
+                                <td class="text-end fw-bold text-primary px-4">@item.Price.ToString("C")</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination-container d-flex justify-content-center">
+                <nav>
+                    <ul class="pagination">
+                        <li class="page-item @(Model.pageIndex == 1 ? "disabled" : "")">
+                            <a class="page-link shadow-sm" href="javascript:void(0)" onclick="changePage(@(Model.pageIndex - 1))">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        </li>
+                        @for (int i = 1; i <= Math.Ceiling((double)Model.totalCount / Model.pageSize); i++)
+                        {
+                            <li class="page-item @(i == Model.pageIndex ? "active" : "")">
+                                <a class="page-link shadow-sm" href="javascript:void(0)" onclick="changePage(@i)">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.pageIndex >= Math.Ceiling((double)Model.totalCount / Model.pageSize) ? "disabled" : "")">
+                            <a class="page-link shadow-sm" href="javascript:void(0)" onclick="changePage(@(Model.pageIndex + 1))">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        // ===== TempData Notifications (Create / Edit) =====
+        const successMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["SuccessMessage"]?.ToString()));
+        const errorMessage = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(TempData["ErrorMessage"]?.ToString()));
+
+        document.addEventListener("DOMContentLoaded", function () {
+        if (successMessage) {
+        Swal.fire({
+        icon: 'success',
+        title: 'Success',
+        text: successMessage,
+        timer: 2200,
+        showConfirmButton: false
+        });
+        }
+
+        if (errorMessage) {
+        Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorMessage
+        });
+        }
+        });
+
+        // Synchronizes URL with current filter states and reloads page
+        function updateUrl(page = 1) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('searchValue', $('#searchInput').val().trim());
+        url.searchParams.set('brandId', $('#brandFilter').val());
+        url.searchParams.set('typeId', $('#typeFilter').val());
+        url.searchParams.set('sortingOptions', $('#sortFilter').val());
+        url.searchParams.set('pageIndex', page);
+        window.location.href = url.toString();
+        }
+
+        function changePage(page) {
+        updateUrl(page);
+        }
+
+        // Live Filter: Trigger on select change
+        $('.live-filter').on('change', () => updateUrl(1));
+
+        // Live Filter: Trigger on typing with 500ms delay (Debounce)
+        let searchTimer;
+        $('#searchInput').on('input', function () {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(() => updateUrl(1), 500);
+        });
+
+        // Row Selection Logic: Toggle selection on click
+        $(document).on('click', '.product-row', function (e) {
+        if ($(e.target).closest('button, a').length) return;
+
+        $(this).toggleClass('selected-row');
+
+        const selectedRows = $('.selected-row');
+        const count = selectedRows.length;
+
+        if (count > 0) {
+        $('#selectionBar').slideDown(250);
+        $('#selectedCount').text(count);
+        $('#btnBulkEdit, #btnBulkDetails').toggle(count === 1);
+        } else {
+        $('#selectionBar').slideUp(200);
+        }
+        });
+
+        // Reset all selections
+        $('#btnCancelSelection').click(() => {
+        $('.product-row').removeClass('selected-row');
+        $('#selectionBar').slideUp(200);
+        });
+
+        // Navigate to Details page
+        $('#btnBulkDetails').click(() => {
+        const id = $('.selected-row').data('id');
+        if (id) window.location.href = `/Products/Details/${id}`;
+        });
+
+        // Navigate to Edit page
+        $('#btnBulkEdit').click(() => {
+        const id = $('.selected-row').data('id');
+        if (id) window.location.href = `/Products/Edit/${id}`;
+        });
+
+        // Delete Logic with SweetAlert2 confirmation
+        $('#btnBulkDelete').click(() => {
+        const ids = $('.selected-row').map(function () {
+        return $(this).data('id');
+        }).get();
+
+        if (ids.length === 0) return;
+
+        Swal.fire({
+        title: 'Are you sure?',
+        text: `You are about to delete ${ids.length} product(s). This cannot be undone!`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6e7881',
+        confirmButtonText: 'Yes, delete them!'
+        }).then((result) => {
+        if (result.isConfirmed) {
+        const token = $('input[name="__RequestVerificationToken"]').val();
+
+        fetch('/Products/BulkDelete', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'RequestVerificationToken': token
+        },
+        body: JSON.stringify(ids)
+        })
+        .then(async res => {
+        if (res.ok) {
+        const data = await res.json();
+
+        await Swal.fire({
+        icon: 'success',
+        title: 'Deleted!',
+        text: data.message || 'Products deleted successfully',
+        timer: 2000,
+        showConfirmButton: false
+        });
+
+        window.location.reload();
+        } else {
+        const errorText = await res.text();
+
+        Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: errorText || 'Failed to delete products'
+        });
+        }
+        })
+        .catch(() => {
+        Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Something went wrong while deleting products'
+        });
+        });
+        }
+        });
+        });
+    </script>
+}

@@ -1,0 +1,272 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model IEnumerable<IdentityRole>
+@{
+    ViewData["Title"] = "Security Roles";
+}
+
+@Html.AntiForgeryToken()
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet" />
+
+<style>
+    :root {
+        --security-primary: #4f46e5; /* Modern Indigo for Security */
+        --security-secondary: #0f172a; /* Slate Dark */
+        --glass-effect: rgba(255, 255, 255, 0.7);
+    }
+
+    body {
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Page Header Glassmorphism */
+    .header-hub {
+        background: var(--glass-effect);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        border-radius: 24px;
+        padding: 1.5rem 2.5rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+    }
+
+    /* Role Node Styling */
+    .role-node {
+        background: white;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        border-radius: 20px;
+        padding: 1.5rem;
+        margin-bottom: 15px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .role-node:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.06);
+    }
+
+    /* Active Selection State */
+    .role-node.active-role {
+        background: var(--security-secondary);
+        color: white !important;
+        transform: scale(1.02);
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.2);
+    }
+
+    .active-role .role-icon-box { background: rgba(255,255,255,0.1); color: #fff; }
+    .active-role .role-id-text { color: rgba(255,255,255,0.5); }
+    .active-role .role-name { color: white; }
+    .active-role .security-badge { background: var(--security-primary); color: white; border-color: var(--security-primary); }
+
+    .role-icon-box {
+        width: 55px;
+        height: 55px;
+        background: #f1f5f9;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        color: var(--security-primary);
+        transition: 0.3s;
+    }
+
+    .role-id-text {
+        font-family: 'JetBrains Mono', 'Monaco', monospace;
+        font-size: 0.75rem;
+        color: #94a3b8;
+        background: rgba(0,0,0,0.03);
+        padding: 4px 8px;
+        border-radius: 6px;
+    }
+
+    /* Floating Control Center */
+    .control-hub {
+        position: fixed;
+        bottom: 35px;
+        left: 50%;
+        transform: translateX(-50%) translateY(120px);
+        background: rgba(15, 23, 42, 0.95);
+        backdrop-filter: blur(15px);
+        padding: 12px 24px;
+        border-radius: 100px;
+        display: flex;
+        gap: 15px;
+        align-items: center;
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        z-index: 1000;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .control-hub.active { transform: translateX(-50%) translateY(0); }
+
+    .btn-action-hub {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+        text-decoration: none;
+    }
+
+    .btn-edit-hub { background: #fbbf24; color: #000; }
+    .btn-delete-hub { background: #ef4444; color: #fff; border: none; }
+    
+    .btn-action-hub:hover { transform: scale(1.15) rotate(5deg); color: inherit; }
+
+    /* Custom Floating Add Button */
+    .add-floating-btn {
+        background: var(--security-secondary);
+        color: white;
+        padding: 12px 28px;
+        border-radius: 16px;
+        border: none;
+        font-weight: 600;
+        box-shadow: 0 10px 20px rgba(15, 23, 42, 0.2);
+        transition: all 0.3s;
+    }
+    .add-floating-btn:hover { background: var(--security-primary); color: white; transform: translateY(-2px); }
+
+    .security-badge {
+        font-size: 0.7rem;
+        border: 1px solid #e2e8f0;
+        color: #64748b;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+    }
+</style>
+
+<div class="container py-4">
+    <div class="header-hub d-flex justify-content-between align-items-center animate__animated animate__fadeInDown">
+        <div>
+            <div class="d-flex align-items-center mb-1">
+                <i class="fas fa-shield-alt text-primary fs-4 me-2"></i>
+                <h4 class="fw-bold mb-0">System Roles</h4>
+            </div>
+            <p class="text-muted small mb-0 mt-1">Access Control & Security Levels</p>
+        </div>
+        <div class="d-flex align-items-center gap-4">
+            <div class="text-end d-none d-md-block">
+                <h3 class="fw-bold mb-0 text-dark">@Model.Count()</h3>
+                <small class="text-muted text-uppercase fw-bold" style="font-size:0.7rem;">Active Roles</small>
+            </div>
+            <button class="add-floating-btn" data-bs-toggle="modal" data-bs-target="#addRoleModal">
+                <i class="fas fa-plus me-2"></i> New Role
+            </button>
+        </div>
+    </div>
+
+    <div class="row animate__animated animate__fadeInUp">
+        @if (Model.Any())
+        {
+            @foreach (var role in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    @{ var shortId = role.Id.Length > 8 ? role.Id.Substring(0, 8) + "..." : role.Id; }
+                    
+                    <div class="role-node" onclick="handleRoleSelection(this, '@role.Id', '@role.Name')">
+                        <div class="role-icon-box me-3">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h5 class="role-name fw-bold mb-1">@role.Name</h5>
+                            <div class="role-id-text">ID: @shortId</div>
+                        </div>
+                        <div>
+                            <span class="security-badge">SECURED</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="col-12">
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border-0" style="border-radius: 24px;">
+                    <div class="role-icon-box mx-auto mb-3" style="width: 80px; height: 80px; font-size: 2.5rem; background: #fef2f2; color: #ef4444;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark">No Roles Detected</h4>
+                    <p class="text-muted">Initialize your system security by creating the first role.</p>
+                    <button class="btn btn-dark rounded-pill px-4 mt-2" data-bs-toggle="modal" data-bs-target="#addRoleModal">Create Genesis Role</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<div id="floatingMgmtBar" class="control-hub">
+    <div class="d-flex align-items-center me-2">
+        <i class="fas fa-fingerprint text-white opacity-50 me-2"></i>
+        <span id="selectedRoleLabel" class="text-white small fw-bold text-uppercase tracking-wide"></span>
+    </div>
+    <div class="vr bg-white opacity-25 mx-1"></div>
+    
+    <a id="editRoleLink" href="#" class="btn-action-hub btn-edit-hub" title="Edit Role">
+        <i class="fas fa-pen"></i>
+    </a>
+    
+    <a id="deleteRoleLink" href="#" class="btn-action-hub btn-delete-hub" title="Delete Role">
+        <i class="fas fa-trash"></i>
+    </a>
+</div>
+
+<div class="modal fade" id="addRoleModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
+            <div class="modal-header border-0 pb-0 px-4 pt-4">
+                <h5 class="fw-bold"><i class="fas fa-shield-alt text-primary me-2"></i> Configure New Role</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <partial name="ModalPartialView" model="new RoleViewModel()" />
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        let currentRole = { id: null, name: "" };
+
+        /**
+         * Handles the selection of a Role Node
+         */
+        function handleRoleSelection(element, roleId, roleName) {
+            const isAlreadyActive = element.classList.contains('active-role');
+            
+            // Clear all active states
+            document.querySelectorAll('.role-node').forEach(node => node.classList.remove('active-role'));
+            document.getElementById('floatingMgmtBar').classList.remove('active');
+
+            if (!isAlreadyActive) {
+                // Activate clicked node
+                element.classList.add('active-role');
+                currentRole = { id: roleId, name: roleName };
+                
+                // Update Control Hub UI
+                document.getElementById('selectedRoleLabel').innerText = roleName;
+                
+                // Update Links based on your original routing (asp-action="Edit" asp-route-id="...")
+                document.getElementById('editRoleLink').href = `/Roles/Edit/${roleId}`; // Update path if your controller route differs
+                document.getElementById('deleteRoleLink').href = `/Roles/Delete/${roleId}`; // Update path if your controller route differs
+                
+                // Show Control Hub
+                document.getElementById('floatingMgmtBar').classList.add('active');
+            }
+        }
+    </script>
+}

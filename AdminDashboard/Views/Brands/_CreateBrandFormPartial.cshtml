@@ -1,0 +1,42 @@
+﻿@using Shared.DataTransferObject.ProductModules
+@model BrandDto
+
+<form asp-action="Create" asp-controller="Brands" method="post" class="animate__animated animate__fadeIn">
+    <div class="mb-3">
+        <div class="input-group custom-brand-group shadow-sm">
+            
+            <span class="input-group-text bg-white border-end-0 ps-3">
+                <i class="fas fa-tag text-primary"></i>
+            </span>
+            
+            <input asp-for="Name" 
+                   class="form-control border-start-0 ps-1 py-3 fw-bold" 
+                   style="font-size: 1.1rem; border-color: #dee2e6;"
+                   placeholder="Brand Name (e.g. Nike)..." 
+                   required 
+                   autocomplete="off" />
+
+            <button type="submit" class="btn btn-primary px-4 fw-bold">
+                <i class="fas fa-plus me-1"></i> Add Brand
+            </button>
+        </div>
+        <span asp-validation-for="Name" class="text-danger small mt-2 d-block ms-2 fw-semibold"></span>
+    </div>
+</form>
+
+<style>
+    .custom-brand-group {
+        border-radius: 12px;
+        overflow: hidden;
+        border: 1px solid #dee2e6;
+    }
+    .custom-brand-group .form-control { border: none; }
+    .custom-brand-group .form-control:focus { box-shadow: none; background: #fff; }
+    .custom-brand-group .input-group-text { border: none; color: #adb5bd; }
+    .custom-brand-group .btn-primary {
+        border: none;
+        border-radius: 0;
+        background-color: #6366f1;
+        transition: 0.3s;
+    }
+</style>

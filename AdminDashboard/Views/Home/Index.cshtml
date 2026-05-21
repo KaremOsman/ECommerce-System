@@ -1,0 +1,318 @@
+﻿@model HomeViewModel
+@{
+    ViewData["Title"] = "Dashboard Home";
+}
+
+@section Styles {
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* ================= WELCOME CARD ================= */
+        .welcome-section {
+            position: relative;
+            overflow: hidden;
+            border-radius: 30px;
+            padding: 2.8rem;
+            color: white;
+            background: linear-gradient(135deg, #7c3aed, #06b6d4, #22c55e);
+            background-size: 200% 200%;
+            animation: gradientMove 8s ease infinite;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-section::before,
+        .welcome-section::after {
+            content: "";
+            position: absolute;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            filter: blur(50px);
+            opacity: 0.4;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .welcome-section::before {
+            background: #ffffff;
+            top: -80px;
+            left: -80px;
+        }
+
+        .welcome-section::after {
+            background: #000000;
+            bottom: -100px;
+            right: -100px;
+            animation-delay: 2s;
+        }
+
+        .welcome-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+        }
+
+        .welcome-subtitle {
+            opacity: 0.85;
+            margin-top: 10px;
+        }
+
+        .welcome-btn {
+            margin-top: 18px;
+            padding: 10px 26px;
+            border-radius: 999px;
+            border: none;
+            font-weight: 600;
+            background: white;
+            color: #1e293b;
+            transition: 0.3s ease;
+        }
+
+        .welcome-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* ================= STATS ================= */
+        .stat-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #edf2f7;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .icon-shape {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 1rem;
+        }
+
+        .bg-soft-primary { background: #e0e7ff; color: #4338ca; }
+        .bg-soft-success { background: #dcfce7; color: #15803d; }
+        .bg-soft-warning { background: #fef9c3; color: #a16207; }
+        .bg-soft-danger { background: #fee2e2; color: #b91c1c; }
+
+        /* ================= TABLE ================= */
+        .recent-table-card {
+            background: #fff;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #edf2f7;
+        }
+
+        /* ================= ANIMATIONS (FIXED FOR RAZOR) ================= */
+
+        @@keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @@keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(30px); }
+        }
+
+        @@keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+    </style>
+}
+
+<div class="container-fluid py-4">
+
+    <!-- ================= WELCOME ================= -->
+    <div class="welcome-section shadow-sm">
+
+        <div class="row">
+            <div class="col-md-8">
+
+                <h1 class="welcome-title">
+                    Welcome, @(User.Identity?.IsAuthenticated == true ? User.Identity.Name : "Guest") <i class="fa-solid fa-hands-clapping" style="color: rgb(255, 212, 59);"></i>
+                </h1>
+
+                <p class="welcome-subtitle">
+                    Your dashboard is alive — everything is syncing in real time 🚀
+                </p>
+
+                <button class="welcome-btn">
+                    View Analytics
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= STATS ================= -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm">
+                <div class="icon-shape bg-soft-primary">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small fw-bold">Total Products</h6>
+                    <h3 class="fw-bold mb-0">@Model.TotalProducts</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm">
+                <div class="icon-shape bg-soft-success">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small fw-bold">Total Users</h6>
+                    <h3 class="fw-bold mb-0">@Model.TotalUsers</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm">
+                <div class="icon-shape bg-soft-warning">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small fw-bold">Today Sales</h6>
+                    <h3 class="fw-bold mb-0">$@Model.TodaySales</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="stat-card shadow-sm">
+                <div class="icon-shape bg-soft-danger">
+                    <i class="fas fa-tags"></i>
+                </div>
+                <div>
+                    <h6 class="text-muted mb-1 small fw-bold">Brands</h6>
+                    <h3 class="fw-bold mb-0">@Model.TotalBrands</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <div class="row g-4">
+
+        <!-- RECENT PRODUCTS -->
+        <div class="col-md-8">
+            <div class="recent-table-card shadow-sm">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold m-0">Recent Products Added</h5>
+                    <a asp-controller="Products" asp-action="Index"
+                       class="btn btn-sm btn-outline-primary rounded-pill">
+                        View All
+                    </a>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Product</th>
+                                <th>Brand</th>
+                                <th>Price</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if (Model.RecentProducts != null && Model.RecentProducts.Count > 0)
+                            {
+                                foreach (var item in Model.RecentProducts)
+                                {
+                                    <tr>
+                                        <td>@item.Name</td>
+                                        <td>@item.BrandName</td>
+                                        <td class="fw-bold">$@item.Price</td>
+                                        <td>
+                                            <span class="badge bg-success rounded-pill">
+                                                In Stock
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="4" class="text-center text-muted">
+                                        No recent products
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- QUICK ACTIONS -->
+        <div class="col-md-4">
+            <div class="recent-table-card shadow-sm">
+
+                <h5 class="fw-bold mb-4">Quick Actions</h5>
+
+                <div class="d-grid gap-2">
+
+                    <a asp-controller="Products" asp-action="Create"
+                       class="btn btn-light text-start p-3 rounded-4 border">
+                        <i class="fas fa-plus-circle text-primary me-2"></i> Add New Product
+                    </a>
+
+                    <a asp-controller="Users" asp-action="Index"
+                       class="btn btn-light text-start p-3 rounded-4 border">
+                        <i class="fas fa-user-plus text-success me-2"></i> Manage Users
+                    </a>
+
+                    <a asp-controller="Products" asp-action="Index"
+                       class="btn btn-light text-start p-3 rounded-4 border">
+                        <i class="fas fa-boxes text-info me-2"></i> Manage Products
+                    </a>
+
+                    <button class="btn btn-light text-start p-3 rounded-4 border">
+                        <i class="fas fa-file-export text-warning me-2"></i> Export Sales Report
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
