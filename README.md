@@ -104,6 +104,6 @@ Coming Soon...
 
 # 👨‍💻 Author
 
-## كريم عثمان
+## Mohamed Osman MOhamed
 
 ASP.NET Core Developer
