@@ -1,109 +1,77 @@
-# 🚀 E-Commerce System
+# 🚀 E-Commerce System (.NET 8 | Clean Architecture | Enterprise-Ready)
 
-A full-stack E-Commerce web application built using ASP.NET Core MVC and Web API following N-Tier Architecture principles.
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)
+![C#](https://img.shields.io/badge/C%23-11-239120?style=for-the-badge&logo=c-sharp&logoColor=white)
+![SQL Server](https://img.shields.io/badge/SQL_Server-CC2927?style=for-the-badge&logo=microsoft-sql-server&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DD0031?style=for-the-badge&logo=redis&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
 
 ---
 
-# 🛠️ Technologies Used
+## 📌 Overview
+
+A scalable E-Commerce system built with ASP.NET Core MVC + Web API (RESTful Architecture) using Clean Architecture.
+
+---
+
+## 🏗️ Architecture
+
+
+E-Commerce Solution (8 Projects)
+
+├── Core
+│ ├── Domain
+│ ├── Service
+│ └── Services.Abstractions
+│
+├── Infrastructure
+│ ├── Persistence
+│ └── Presentation
+│
+├── AdminDashboard
+│ ├── Controllers
+│ ├── Models
+│ ├── Views
+│ ├── Services
+│ ├── Helper
+│ ├── wwwroot
+│ ├── appsettings.json
+│ └── Program.cs
+│
+├── E-CommerceApp
+│ ├── Extensions
+│ ├── Factories
+│ ├── wwwroot
+│ ├── Properties
+│ └── Dependencies
+
+---
+
+## ✨ Features
+
+- Authentication (JWT)
+- Admin Dashboard
+- Product Management
+- Orders System
+- Redis Cache
+- Stripe Payment
+- Swagger API
+
+---
+
+## 🧰 Tech Stack
 
 - ASP.NET Core MVC
-- ASP.NET Core Web API
-- Entity Framework Core
+- Web API
+- EF Core
 - SQL Server
-- Redis Cache
-- JWT Authentication
-- Stripe Payment Integration
-- Bootstrap
-- LINQ
-- Repository Pattern
-- N-Tier Architecture
+- Redis
+- JWT
+- Stripe
 
 ---
 
-# 📂 Project Structure
+## 👨‍💻 Author
 
-```bash
-AdminDashboard/
-Core/
-Infrastructure/
-Shared/
-```
-
----
-
-# ✨ Features
-
-## 🔹 Admin Dashboard
-- Product Management
-- Product Brand Management
-- Product Type Management 
-- Order Management
-- User Management
-- Roles Management 
-
-## 🔹 API Features
-- RESTful APIs
-- JWT Authentication
-- Secure Endpoints
-- Validation & Error Handling
-
-## 🔹 E-Commerce Features
-- Shopping Cart
-- Checkout System
-- Stripe Payment Gateway
-- Product Filtering & Search
-
----
-
-# 🏗️ Architecture
-
-This project follows:
-
-- N-Tier Architecture
-- Repository Pattern
-- Dependency Injection
-- Clean Separation of Concerns
-
----
-
-# ⚙️ Setup Instructions
-
-## 1️⃣ Clone Repository
-
-```bash
-git clone https://github.com/YOUR_USERNAME/ECommerce-System.git
-```
-
-## 2️⃣ Configure Database
-
-Update your connection string inside:
-
-```bash
-appsettings.json
-```
-
-## 3️⃣ Apply Migrations
-
-```bash
-dotnet ef database update
-```
-
-## 4️⃣ Run The Project
-
-```bash
-dotnet run
-```
-
----
-
-# 📸 Screenshots
-
-Coming Soon...
-
----
-
-# 👨‍💻 Author
-
-## Mohamed Osman MOhamed
-
+Mohamed Osman Mohamed
 ASP.NET Core Developer
