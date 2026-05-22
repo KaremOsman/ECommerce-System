@@ -146,7 +146,7 @@ https://localhost:7026/api/
 
 | Home Page | Login | Products Management |
 | :---: | :---: | :---: |
-| ![Home](screenshots/admin-dashboard-home-page.jpg) | ![Login](screenshots/admin-dashboard-login-page.jpg) | ![Products](screenshots/products-management-home-page.jpg) |
+| ![Home](ScreenShots/admin-dashboard-home-page.jpg) | ![Login](ScreenShots/admin-dashboard-login-page.jpg) | ![Products](ScreenShots/products-management-home-page.jpg) |
 
 ---
 
@@ -154,7 +154,7 @@ https://localhost:7026/api/
 
 | Swagger UI | Authentication | Products API |
 | :---: | :---: | :---: |
-| ![Swagger](screenshots/swagger-page.jpg) | ![Auth](screenshots/authentication-endpoints.jpg) | ![Products API](screenshots/products-endpoints.jpg) |
+| ![Swagger](ScreenShots/swagger-page.jpg) | ![Auth](ScreenShots/authentication-endpoints.jpg) | ![Products API](ScreenShots/products-endpoints.jpg) |
 
 ---
 
