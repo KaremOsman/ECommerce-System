@@ -140,6 +140,50 @@ https://localhost:7026/api/
 
 ---
 
+# ▶️ Running The Application
+
+## Startup Projects
+
+Set the following projects as startup projects:
+
+- E-CommerceApp
+- AdminDashboard
+
+---
+
+## Requirements
+
+Before running the application, make sure you have:
+
+- SQL Server Installed
+- Redis Server Running
+- .NET 8 SDK Installed
+
+---
+
+## Database Migration
+
+Run:
+
+```bash
+dotnet ef database update
+```
+
+---
+
+## Default URLs
+
+### API
+```bash
+https://localhost:7026/api/
+```
+
+### MVC
+```bash
+https://localhost:7173/
+```
+
+
 # 📸 Project Preview
 
 ## 🖥️ Admin Dashboard
